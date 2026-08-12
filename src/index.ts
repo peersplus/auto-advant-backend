@@ -9,11 +9,13 @@ import { apiRouter } from './routes/index.js';
 import { Vehicle } from './models/Vehicle.js';
 import { processEmailQueues } from './services/emailProcessorService.js';
 import { runTestDriveReminderJobs } from './services/testDriveReminderService.js';
+import { runTimesheetReminderJobs } from './services/timesheetReminderService.js';
 
 const app = express();
 let startupReady = false;
 let emailInterval: NodeJS.Timeout | null = null;
 let reminderInterval: NodeJS.Timeout | null = null;
+let timesheetReminderInterval: NodeJS.Timeout | null = null;
 
 const normalizeOrigin = (value?: string) => {
   if (!value) return '';
@@ -34,6 +36,8 @@ app.use(cors({
     if (allowedOrigins.has(normalizedOrigin) || allowedOrigins.has('*')) {
       return callback(null, true);
     }
+
+    console.warn(`[cors] Blocked origin: ${origin}`);
 
     callback(null, false);
   },
@@ -68,6 +72,7 @@ async function start() {
     console.log(`[shutdown] ${signal} received — closing gracefully`);
     if (emailInterval) clearInterval(emailInterval);
     if (reminderInterval) clearInterval(reminderInterval);
+    if (timesheetReminderInterval) clearInterval(timesheetReminderInterval);
     server.close();
     await mongoose.disconnect();
     const apps = getApps();
@@ -113,6 +118,13 @@ async function start() {
   reminderInterval = setInterval(() => {
     void runTestDriveReminderJobs();
   }, REMINDER_INTERVAL_MS);
+
+  // Timesheet reminder scheduler — runs every 5 minutes
+  const TIMESHEET_REMINDER_INTERVAL_MS = 5 * 60_000;
+  void runTimesheetReminderJobs();
+  timesheetReminderInterval = setInterval(() => {
+    void runTimesheetReminderJobs();
+  }, TIMESHEET_REMINDER_INTERVAL_MS);
 
   startupReady = true;
 }
