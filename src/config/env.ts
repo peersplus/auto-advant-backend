@@ -43,4 +43,8 @@ export const env = {
   oauthStateSecret: process.env.OAUTH_STATE_SECRET || 'change-me-in-production',
   // Public frontend URL (used for customer-facing links in emails)
   publicFrontendUrl: process.env.PUBLIC_FRONTEND_URL || 'http://localhost:8080',
+    // AI report generation (optional)
+  aiApiBaseUrl: process.env.AI_API_BASE_URL || 'https://api.openai.com/v1',
+  aiApiKey: process.env.AI_API_KEY || '',
+  aiModel: process.env.AI_MODEL || 'gpt-4.1-mini',
 };
