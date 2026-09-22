@@ -6,12 +6,13 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch --inspect --trace-warnings src/index.js",
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && mkdir -p dist/data && cp src/data/service-packages.json dist/data/service-packages.json",
     "start": "node dist/index.js",
     "lint": "echo \"No API linter configured yet\""
   },
   "dependencies": {
     "@types/nodemailer": "^8.0.0",
+    "@types/pdfkit": "^0.17.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.2",
@@ -19,6 +20,7 @@
     "mongoose": "^8.8.3",
     "multer": "^2.1.1",
     "nodemailer": "^8.0.9",
+    "pdfkit": "^0.20.2",
     "uuid": "^14.0.0",
     "zod": "^3.25.76"
   },
