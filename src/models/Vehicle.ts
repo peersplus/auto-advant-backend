@@ -1,4 +1,11 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, HydratedDocument, Schema } from 'mongoose';
+
+type VehicleConfigOption = Record<string, unknown>;
+
+const createConfigOptionArrayField = () => ({
+  type: [{ type: Schema.Types.Mixed }],
+  default: [] as VehicleConfigOption[],
+});
 
 export interface IVehicle extends Omit<Document, 'model'> {
   id: string;
@@ -33,6 +40,13 @@ export interface IVehicle extends Omit<Document, 'model'> {
   vehicle_condition: string | null;
   grade: string | null;
   image_url: string | null;
+  config_image_urls: string[];
+  config_grades: string[];
+  config_exterior_options: VehicleConfigOption[];
+  config_interior_options: VehicleConfigOption[];
+  config_extras_options: VehicleConfigOption[];
+  config_accessories_options: VehicleConfigOption[];
+  config_addons_options: VehicleConfigOption[];
   registration_number: string | null;
   set_price: number | null;
   available_units: number;
@@ -99,6 +113,13 @@ const VehicleSchema = new Schema<IVehicle>(
     vehicle_condition: { type: String, default: null },
     grade: { type: String, default: null },
     image_url: { type: String, default: null },
+    config_image_urls: { type: [String], default: [] },
+    config_grades: { type: [String], default: [] },
+    config_exterior_options: createConfigOptionArrayField(),
+    config_interior_options: createConfigOptionArrayField(),
+    config_extras_options: createConfigOptionArrayField(),
+    config_accessories_options: createConfigOptionArrayField(),
+    config_addons_options: createConfigOptionArrayField(),
     registration_number: { type: String, default: null },
     set_price: { type: Number, default: null },
     available_units: { type: Number, default: 1 },
@@ -124,7 +145,7 @@ const VehicleSchema = new Schema<IVehicle>(
   { versionKey: false, collection: 'vehicles' },
 );
 
-VehicleSchema.pre('save', function (next) {
+VehicleSchema.pre('save', function (this: HydratedDocument<IVehicle>, next) {
   if (!this.condition && this.vehicle_condition) {
     this.condition = this.vehicle_condition;
   }
