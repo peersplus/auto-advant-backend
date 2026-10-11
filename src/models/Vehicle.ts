@@ -1,11 +1,4 @@
-import mongoose, { Document, HydratedDocument, Schema } from 'mongoose';
-
-type VehicleConfigOption = Record<string, unknown>;
-
-const createConfigOptionArrayField = () => ({
-  type: [{ type: Schema.Types.Mixed }],
-  default: [] as VehicleConfigOption[],
-});
+import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IVehicle extends Omit<Document, 'model'> {
   id: string;
@@ -42,11 +35,11 @@ export interface IVehicle extends Omit<Document, 'model'> {
   image_url: string | null;
   config_image_urls: string[];
   config_grades: string[];
-  config_exterior_options: VehicleConfigOption[];
-  config_interior_options: VehicleConfigOption[];
-  config_extras_options: VehicleConfigOption[];
-  config_accessories_options: VehicleConfigOption[];
-  config_addons_options: VehicleConfigOption[];
+  config_exterior_options: Array<Record<string, unknown>>;
+  config_interior_options: Array<Record<string, unknown>>;
+  config_extras_options: Array<Record<string, unknown>>;
+  config_accessories_options: Array<Record<string, unknown>>;
+  config_addons_options: Array<Record<string, unknown>>;
   registration_number: string | null;
   set_price: number | null;
   available_units: number;
@@ -115,11 +108,11 @@ const VehicleSchema = new Schema<IVehicle>(
     image_url: { type: String, default: null },
     config_image_urls: { type: [String], default: [] },
     config_grades: { type: [String], default: [] },
-    config_exterior_options: createConfigOptionArrayField(),
-    config_interior_options: createConfigOptionArrayField(),
-    config_extras_options: createConfigOptionArrayField(),
-    config_accessories_options: createConfigOptionArrayField(),
-    config_addons_options: createConfigOptionArrayField(),
+    config_exterior_options: { type: [Schema.Types.Mixed], default: [] },
+    config_interior_options: { type: [Schema.Types.Mixed], default: [] },
+    config_extras_options: { type: [Schema.Types.Mixed], default: [] },
+    config_accessories_options: { type: [Schema.Types.Mixed], default: [] },
+    config_addons_options: { type: [Schema.Types.Mixed], default: [] },
     registration_number: { type: String, default: null },
     set_price: { type: Number, default: null },
     available_units: { type: Number, default: 1 },
@@ -145,7 +138,7 @@ const VehicleSchema = new Schema<IVehicle>(
   { versionKey: false, collection: 'vehicles' },
 );
 
-VehicleSchema.pre('save', function (this: HydratedDocument<IVehicle>, next) {
+VehicleSchema.pre('save', function (next) {
   if (!this.condition && this.vehicle_condition) {
     this.condition = this.vehicle_condition;
   }
