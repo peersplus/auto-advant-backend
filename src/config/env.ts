@@ -9,7 +9,7 @@ const appRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../.
 const DEFAULT_CORS_ORIGINS = [
   'http://localhost:3000',
   'https://www.autoadvant.com',
-  'https://autoadvant.com'
+  'https://autoadvant.com',
 ];
 
 const parseOrigins = (value?: string) =>
