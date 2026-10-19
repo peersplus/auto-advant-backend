@@ -35,11 +35,11 @@ export interface IVehicle extends Omit<Document, 'model'> {
   image_url: string | null;
   config_image_urls: string[];
   config_grades: string[];
-  config_exterior_options: Array<Record<string, unknown>>;
-  config_interior_options: Array<Record<string, unknown>>;
-  config_extras_options: Array<Record<string, unknown>>;
-  config_accessories_options: Array<Record<string, unknown>>;
-  config_addons_options: Array<Record<string, unknown>>;
+  config_exterior_options: unknown[];
+  config_interior_options: unknown[];
+  config_extras_options: unknown[];
+  config_accessories_options: unknown[];
+  config_addons_options: unknown[];
   registration_number: string | null;
   set_price: number | null;
   available_units: number;
@@ -138,7 +138,7 @@ const VehicleSchema = new Schema<IVehicle>(
   { versionKey: false, collection: 'vehicles' },
 );
 
-VehicleSchema.pre('save', function (next) {
+VehicleSchema.pre('save', function (this: IVehicle, next) {
   if (!this.condition && this.vehicle_condition) {
     this.condition = this.vehicle_condition;
   }
